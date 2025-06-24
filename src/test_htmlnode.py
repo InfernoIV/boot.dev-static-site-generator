@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 #Add even more test cases (at least 3 in total) to check various edge cases, 
@@ -57,6 +57,32 @@ class TestHtmlNode(unittest.TestCase):
         node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
         self.assertEqual(node.to_html(), "<a href=\"https://www.google.com\">Click me!</a>")
 
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_with_no_children(self):
+        parent_node = ParentNode("div", None)
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
+
+    def test_to_html_with_multiple_children(self):
+        child_node_1 = LeafNode("b", "Bold text")
+        child_node_2 = LeafNode(None, "Normal text")
+        child_node_3 = LeafNode("i", "italic text")
+        child_node_4 = LeafNode(None, "Normal text")
+        parent_node = ParentNode("multiple_children", [child_node_1, child_node_2, child_node_3, child_node_4])
+        self.assertEqual(parent_node.to_html(), "<multiple_children><b>Bold text</b>Normal text<i>italic text</i>Normal text</multiple_children>")
 
 if __name__ == "__main__":
     unittest.main()

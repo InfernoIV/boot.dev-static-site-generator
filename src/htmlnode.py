@@ -71,7 +71,6 @@ class HTMLNode:
     #href="https://www.google.com" target="_blank"
     #Notice the leading space character before href and before target. This is important. HTML attributes are always separated by spaces.
 
-
     #Add a __repr__(self) method. Give yourself a way to print an HTMLNode object and see its tag, value, children, and props. This will be useful for your debugging.
     def __repr__(self):
         return f"HTMLNode - tag: '{self.tag}', value: '{self.value}', children: '{self.children}', props: '{self.props}'"
@@ -86,7 +85,7 @@ class LeafNode(HTMLNode):
     def to_html(self):
         #If the leaf node has no value, it should raise a ValueError. All leaf nodes must have a value.
         if self.value == None:
-            raise ValueError
+            raise ValueError("Missing value")
 
         #If there is no tag (e.g. it's None), the value should be returned as raw text.
         if self.tag == None:
@@ -103,3 +102,39 @@ class LeafNode(HTMLNode):
         #"<a href="https://www.google.com">Click me!</a>"
         
         return f"<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>"      
+
+
+#Create another child class of HTMLNode called ParentNode. 
+class ParentNode(HTMLNode):
+    #Its constructor should differ from HTMLNode in that:
+    #The tag and children arguments are not optional
+    #It doesn't take a value argument
+    #props is optional
+    #(It's the exact opposite of the LeafNode class)
+    def __init__(self, tag, children, props = None):      
+        #Use the super() function to call the constructor of the HTMLNode class.
+        super().__init__(tag, None, children, props)
+
+    #Add a .to_html method. 
+    def to_html(self):
+        #If the object doesn't have a tag, raise a ValueError.
+        if self.tag == None:
+            raise ValueError("Missing tag")
+        #If children is a missing value, raise a ValueError with a different message.
+        if self.children == None:
+            raise ValueError("Missing children")
+
+        #Otherwise, return a string representing the HTML tag of the node and its children. 
+        #This should be a recursive method (each recursion being called on a nested child node).
+        return_string = f"<{self.tag}>"
+        #print(f"self.tag: '{self.tag}'")
+        #print(f"children: '{self.children}'")
+        for child in self.children:    
+            #print(f"child: '{child}'")
+            #print(f"child.to_html(): {child.to_html()}")
+            return_string += f"{child.to_html()}"
+
+        #add closing tag
+        return_string += f"</{self.tag}>"
+        #return the string
+        return return_string
