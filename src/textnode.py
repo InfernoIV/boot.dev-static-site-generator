@@ -1,7 +1,8 @@
 from enum import Enum
+from htmlnode import LeafNode
 
 class TextType(Enum):
-    PLAIN = "text (plain)"
+    TEXT = "text (plain)"
     BOLD = "**Bold text**" 
     ITALIC = "_Italic text_"
     CODE = "`Code text`"
@@ -10,7 +11,7 @@ class TextType(Enum):
 
 class TextNode:
     #init
-    def __init__(self, text = "", text_type = TextType.PLAIN, url = None):
+    def __init__(self, text = "", text_type = TextType.TEXT, url = None):
         #The text content of the node
         self.text = text
         #The type of text this node contains, which is a member of the TextType enum.
@@ -39,3 +40,37 @@ class TextNode:
            
         #all checks passed, return true
         return True
+
+def text_node_to_html_node(text_node: TextNode):
+    #LeafNode(tag, value, props = None)  
+   
+    #It should handle each type of the TextType enum. If it gets a TextNode that is none of those types, it should raise an exception. Otherwise, it should return a new LeafNode object.
+    match text_node.text_type:
+        #TextType.TEXT: This should return a LeafNode with no tag, just a raw text value.
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+        
+        #TextType.BOLD: This should return a LeafNode with a "b" tag and the text
+        case TextType.BOLD:
+            return LeafNode("b", text_node.text)
+        
+        #TextType.ITALIC: "i" tag, text
+        case TextType.ITALIC:
+            return LeafNode("i", text_node.text)
+
+        #TextType.CODE: "code" tag, text
+        case TextType.CODE:
+            return LeafNode("code", text_node.text)
+
+        #TextType.LINK: "a" tag, anchor text, and "href" prop
+        case TextType.LINK:
+            #TODO
+            return LeafNode("a", text_node.text, {"href": ""})
+        
+        #TextType.IMAGE: "img" tag, empty string value, "src" and "alt" props ("src" is the image URL, "alt" is the alt text)
+        case TextType.IMAGE:
+            return LeafNode("img", "", {"src": "", "alt": ""})
+        
+        case _:
+            raise ValueError(f"Unknown text type! '{text_node.text_type}'")    
+    
