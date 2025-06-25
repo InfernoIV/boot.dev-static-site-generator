@@ -25,6 +25,9 @@ class TextNode:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
     def __eq__(self, other_textNode):
+        #guard clause
+        if other_textNode == None:
+            return False
         
         if self.text != other_textNode.text:
             #print(f"text not equal!: '{self.text}', '{other_textNode.text}'")
